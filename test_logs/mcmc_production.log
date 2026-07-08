@@ -1,0 +1,120 @@
+[output] Output to be read-from/written-into folder 'chains', with prefix 'stratoverso_production_v1'
+[classy] `classy` module loaded successfully from /Users/coldmac/.gemini/antigravity/scratch/stratoverso_research/class_stratoverso/build/lib.macosx-10.13-universal2-cpython-313/classy
+[planck_2018_lowl.tt_clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/low_l/commander/commander_dx12_v3_2_29.clik' on test data. got -11.6257 expected -11.6257 (diff 1.02746e-06)
+----
+crop is not implemented for this likelihood
+[planck_2018_lowl.ee_clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/low_l/simall/simall_100x143_offlike5_EE_Aplanck_B.clik' on test data. got -197.99 expected -197.99 (diff -4.1778e-08)
+----
+crop is not implemented for this likelihood
+[planck_2018_highl_plik.ttteee_lite] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/hi_l/plik_lite/plik_lite_v22_TTTEEE.clik' on test data. got -292.286 expected -292.286 (diff -3.86234e-09)
+----
+before crop : TT 30 -> 2508, TE 30 -> 1996, EE 30 -> 1996
+after crop  : TT 30 -> 2508, TE 30 -> 1996, EE 30 -> 1996
+[planck_2018_lensing.clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/lensing/smicadx12_Dec5_ftl_mv2_ndclpp_p_teb_consext8.clik_lensing' on test data. got -4.42102
+----
+[bao.desi_dr2.desi_bao_all] Initialized.
+[mcmc] Getting initial point... (this may take a few seconds)
+[mcmc] Initial point: H0:67.4, omega_b:0.02237, omega_cdm:0.12, tau_reio:0.0544, A_s:2.1e-09, n_s:0.9649, A_planck:1, lambda_reset:0.3, g_holographic:0.014, phi_phase:3.14
+[model] Measuring speeds... (this may take a few seconds)
+[model] Setting measured speeds (per sec): {planck_2018_lowl.TT_clik: 940.0, planck_2018_lowl.EE_clik: 4370.0, planck_2018_highl_plik.TTTEEE_lite: 554.0, planck_2018_lensing.clik: 1080.0, bao.desi_dr2.desi_bao_all: 729.0, sn.pantheonplus: 609.0, classy: 0.0899}
+[mcmc] Oversampling with factors:
+[mcmc] *  1 : ['H0', 'omega_b', 'omega_cdm', 'tau_reio', 'A_s', 'n_s', 'lambda_reset', 'g_holographic', 'phi_phase']
+[mcmc] * 21 : ['A_planck']
+[mcmc] Covariance matrix not present. We will start learning the covariance of the proposal earlier: R-1 = 30 (would be 2 if all params loaded).
+[mcmc] Sampling!
+[mcmc] Progress @ 2026-06-23 17:14:52 : 1 steps taken, and 0 accepted.
+[mcmc] Progress @ 2026-06-23 17:15:54 : 17 steps taken, and 4 accepted.
+[mcmc] Progress @ 2026-06-23 17:16:58 : 33 steps taken, and 8 accepted.
+[mcmc] Progress @ 2026-06-23 17:18:02 : 55 steps taken, and 14 accepted.
+[mcmc] Progress @ 2026-06-23 17:19:11 : 63 steps taken, and 15 accepted.
+[mcmc] Progress @ 2026-06-23 17:20:17 : 77 steps taken, and 15 accepted.
+[mcmc] Progress @ 2026-06-23 17:21:22 : 96 steps taken, and 15 accepted.
+[mcmc] Progress @ 2026-06-23 17:22:28 : 117 steps taken, and 17 accepted.
+[mcmc] Progress @ 2026-06-23 17:23:30 : 138 steps taken, and 23 accepted.
+[mcmc] Progress @ 2026-06-23 17:24:35 : 146 steps taken, and 25 accepted.
+[mcmc] Progress @ 2026-06-23 17:25:37 : 168 steps taken, and 30 accepted.
+[mcmc] Progress @ 2026-06-23 17:26:41 : 181 steps taken, and 35 accepted.
+[mcmc] Progress @ 2026-06-23 17:27:42 : 191 steps taken, and 38 accepted.
+[mcmc] Progress @ 2026-06-23 17:28:51 : 213 steps taken, and 45 accepted.
+[mcmc] Progress @ 2026-06-23 17:29:58 : 238 steps taken, and 53 accepted.
+[mcmc] Progress @ 2026-06-23 17:31:05 : 253 steps taken, and 57 accepted.
+[mcmc] Progress @ 2026-06-23 17:32:14 : 288 steps taken, and 68 accepted.
+[mcmc] Progress @ 2026-06-23 17:33:24 : 306 steps taken, and 72 accepted.
+[mcmc] Progress @ 2026-06-23 17:34:34 : 328 steps taken, and 79 accepted.
+[mcmc] Progress @ 2026-06-23 17:35:45 : 337 steps taken, and 80 accepted.
+[mcmc] Progress @ 2026-06-23 17:36:46 : 357 steps taken, and 86 accepted.
+[mcmc] Progress @ 2026-06-23 17:37:51 : 374 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:38:58 : 388 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:40:06 : 404 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:41:16 : 425 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:42:23 : 443 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:43:27 : 460 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:44:34 : 482 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:45:43 : 495 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:46:48 : 517 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:48:00 : 536 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:49:08 : 550 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:50:11 : 572 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:51:16 : 577 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:52:22 : 603 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:53:35 : 622 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:54:36 : 637 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:55:44 : 655 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:56:51 : 669 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:57:55 : 676 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 17:59:00 : 704 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 18:00:01 : 727 steps taken, and 89 accepted.
+[mcmc] Progress @ 2026-06-23 18:01:11 : 743 steps taken, and 89 accepted.
+[mcmc] *ERROR* The chain has been stuck for 400 attempts, stopping sampling. Make sure the reference point is sensible and initial covmat. For parameters not included in an initial covmat, the 'proposal' width set for each parameter should be of order of the expected conditional posterior width, which may be much smaller than the marginalized posterior width - choose a smaller rather than larger value if in doubt. You can also decrease the 'proposal_scale' option for mcmc, though small values will sample less efficiently once things converge. Or make your starting 'ref'tighter around an expected best-fit value
+Alternatively (though not advisable) make 'max_tries: np.inf' (or 'max_tries: .inf' in yaml).
+Current point: H0:67.29377, omega_b:0.02236342, omega_cdm:0.1091884, tau_reio:0.06000113, A_s:2.074693e-09, n_s:0.9636328, A_planck:1.008469, lambda_reset:0.3082357, g_holographic:0.01522306, phi_phase:3.003397
+Current result: LogPosterior(logpost=np.float64(-1520.0468391445586), logpriors=[np.float64(34.403800700106984)], loglikes=array([ -13.04789685, -198.43713077, -592.15633287,  -38.98586347,
+        -10.20020462, -701.62321126]), derived=[13.949829287189848, np.float64(20.400409236681885), np.float64(1685.2544479249561), np.float64(1403.246422527693)], finite=False)
+Last proposal: [6.72034873e+01 2.23911367e-02 1.08892868e-01 5.88688640e-02
+ 2.16689207e-09 9.66194716e-01 1.00846932e+00 3.12595398e-01
+ 1.46908876e-02 2.93261413e+00]
+With rejected result: LogPosterior(logpost=np.float64(-2179.8413933357583), logpriors=[np.float64(34.403800700106984)], loglikes=array([  -16.58887321,  -198.35482356, -1234.06287771,   -22.65684793,
+         -40.63378367,  -701.94798795]), derived=[13.78566180809362, np.float64(81.26756733437428), np.float64(2943.326844830296), np.float64(1403.8959759070601)], finite=False)
+[exception handler] ---------------------------------------
+
+Traceback (most recent call last):
+  File "/Users/coldmac/.gemini/antigravity/scratch/stratoverso_research/class_stratoverso/run_cobaya_stratoverso.py", line 117, in <module>
+    updated_info, sampler = run(info)
+                            ~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cobaya/run.py", line 182, in run
+    sampler.run()
+    ~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cobaya/samplers/mcmc/mcmc.py", line 471, in run
+    self.get_new_sample()
+    ~~~~~~~~~~~~~~~~~~~^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cobaya/samplers/mcmc/mcmc.py", line 561, in get_new_sample_metropolis
+    self.process_accept_or_reject(accept, trial, trial_results)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages/cobaya/samplers/mcmc/mcmc.py", line 722, in process_accept_or_reject
+    raise LoggedError(
+    ...<20 lines>...
+    )
+cobaya.log.LoggedError: The chain has been stuck for 400 attempts, stopping sampling. Make sure the reference point is sensible and initial covmat. For parameters not included in an initial covmat, the 'proposal' width set for each parameter should be of order of the expected conditional posterior width, which may be much smaller than the marginalized posterior width - choose a smaller rather than larger value if in doubt. You can also decrease the 'proposal_scale' option for mcmc, though small values will sample less efficiently once things converge. Or make your starting 'ref'tighter around an expected best-fit value
+Alternatively (though not advisable) make 'max_tries: np.inf' (or 'max_tries: .inf' in yaml).
+Current point: H0:67.29377, omega_b:0.02236342, omega_cdm:0.1091884, tau_reio:0.06000113, A_s:2.074693e-09, n_s:0.9636328, A_planck:1.008469, lambda_reset:0.3082357, g_holographic:0.01522306, phi_phase:3.003397
+Current result: LogPosterior(logpost=np.float64(-1520.0468391445586), logpriors=[np.float64(34.403800700106984)], loglikes=array([ -13.04789685, -198.43713077, -592.15633287,  -38.98586347,
+        -10.20020462, -701.62321126]), derived=[13.949829287189848, np.float64(20.400409236681885), np.float64(1685.2544479249561), np.float64(1403.246422527693)], finite=False)
+Last proposal: [6.72034873e+01 2.23911367e-02 1.08892868e-01 5.88688640e-02
+ 2.16689207e-09 9.66194716e-01 1.00846932e+00 3.12595398e-01
+ 1.46908876e-02 2.93261413e+00]
+With rejected result: LogPosterior(logpost=np.float64(-2179.8413933357583), logpriors=[np.float64(34.403800700106984)], loglikes=array([  -16.58887321,  -198.35482356, -1234.06287771,   -22.65684793,
+         -40.63378367,  -701.94798795]), derived=[13.78566180809362, np.float64(81.26756733437428), np.float64(2943.326844830296), np.float64(1403.8959759070601)], finite=False)
+-------------------------------------------------------------
+

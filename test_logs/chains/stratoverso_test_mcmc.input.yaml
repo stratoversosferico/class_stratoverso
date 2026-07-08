@@ -1,0 +1,50 @@
+theory:
+  classy:
+    path: /Users/coldmac/.gemini/antigravity/scratch/stratoverso_research/class_stratoverso
+    extra_args:
+      omega_b: 0.0224
+      omega_cdm: 0.12
+      Omega_scf: 0.1
+      attractor_ic_scf: 'yes'
+      scf_parameters: 10.0, 0.0, 0.0, 0.0
+      scf_tuning_index: 0
+likelihood:
+  stratoverso_likelihood: !!python/name:__main__.StratoversoLikelihood ''
+params:
+  H0:
+    prior:
+      min: 67.0
+      max: 68.0
+    ref: 67.4
+    proposal: 0.05
+    latex: H_0
+  age:
+    latex: t_0
+  lambda_reset:
+    prior:
+      min: 0.25
+      max: 0.35
+    ref: 0.3
+    proposal: 0.005
+    latex: \lambda
+  g_holographic:
+    prior:
+      min: 0.005
+      max: 0.025
+    ref: 0.014
+    proposal: 0.001
+    latex: g
+  phi_phase:
+    prior:
+      min: 0.0
+      max: 6.28318
+    ref: 3.14
+    proposal: 0.1
+    latex: \varphi
+sampler:
+  mcmc:
+    max_samples: 100
+    max_tries: 100
+    Rminus1_stop: 0.8
+    drag: false
+output: stratoverso_test_mcmc

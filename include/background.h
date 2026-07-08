@@ -118,6 +118,14 @@ struct background
   double phi_ini_scf;      /**< \f$ \phi(t_0) \f$: scalar field initial value */
   double phi_prime_ini_scf;/**< \f$ d\phi(t_0)/d\tau \f$: scalar field initial derivative wrt conformal time */
   int scf_parameters_size; /**< size of scf_parameters */
+  double lambda_reset; /**< Stratoverso conformal reset factor lambda */
+  double a_phys_factor; /**< Stratoverso physical scale factor rescaling factor */
+  double a_phys_factor_today; /**< Stratoverso physical scale factor rescaling factor today */
+  double t_star; /**< Stratoverso boundary cosmic time t_star */
+  double tau_today; /**< Stratoverso tau_today parameter */
+  double gamma_eff; /**< Stratoverso effective slope gamma_eff */
+  double z_trans; /**< Stratoverso hybrid LCDM+Stratoverso gate: transition redshift */
+  double delta_z; /**< Stratoverso hybrid LCDM+Stratoverso gate: transition width in z */
   double varconst_alpha; /**< finestructure constant for varying fundamental constants */
   double varconst_me; /**< electron mass for varying fundamental constants */
   enum varconst_dependence varconst_dep; /**< dependence of the varying fundamental constants as a function of time */
@@ -494,6 +502,16 @@ extern "C" {
                        struct precision *ppr,
                        struct background *pba
                        );
+
+  int background_solve_stratoverso(
+                                   struct precision *ppr,
+                                   struct background *pba
+                                   );
+
+  double stratoverso_n_smooth_of_t(
+                                   struct background *pba,
+                                   double t
+                                   );
 
   int background_initial_conditions(
                                     struct precision *ppr,

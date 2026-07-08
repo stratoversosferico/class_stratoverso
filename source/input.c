@@ -3372,6 +3372,10 @@ int input_read_parameters_species(struct file_content * pfc,
     }
   }
 
+  class_read_double("lambda_reset",pba->lambda_reset);
+  class_read_double("z_trans",pba->z_trans);
+  class_read_double("delta_z",pba->delta_z);
+
   return _SUCCESS_;
 
 }
@@ -4197,6 +4201,8 @@ int input_read_parameters_primordial(struct file_content * pfc,
         /* Read */
         class_read_double("n_s",ppm->n_s);
         class_read_double("alpha_s",ppm->alpha_s);
+        class_read_double("g_holographic",ppm->g_holographic);
+        class_read_double("phi_phase",ppm->phi_phase);
       }
 
       /** 1.b.1.2) Isocurvature/entropy perturbations */
@@ -5928,6 +5934,11 @@ int input_default_params(struct background *pba,
   pba->phi_prime_ini_scf = 1;          //     factors of the radiation attractor values
   /** 9.b.3) Tuning parameter */
   pba->scf_tuning_index = 0;
+  pba->lambda_reset = 0.300;
+  pba->a_phys_factor = 1.0;
+  pba->a_phys_factor_today = 1.0;
+  pba->z_trans = 20.0;
+  pba->delta_z = 5.0;
 
   /**
    * Deafult to input_read_parameters_heating
@@ -6019,6 +6030,8 @@ int input_default_params(struct background *pba,
   /** 1.b.1.1) Adiabatic perturbations */
   ppm->n_s = 0.9660499;
   ppm->alpha_s = 0.;
+  ppm->g_holographic = 0.014;
+  ppm->phi_phase = 0.0;
   /** 1.b.1.2) Isocurvature/entropy perturbations */
   ppm->f_bi = 1.;
   ppm->n_bi = 1.;

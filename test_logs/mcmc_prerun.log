@@ -1,0 +1,66 @@
+[output] Output to be read-from/written-into folder 'chains', with prefix 'stratoverso_prerun'
+[classy] `classy` module loaded successfully from /Users/coldmac/.gemini/antigravity/scratch/stratoverso_research/class_stratoverso/build/lib.macosx-10.13-universal2-cpython-313/classy
+[planck_2018_lowl.tt_clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/low_l/commander/commander_dx12_v3_2_29.clik' on test data. got -11.6257 expected -11.6257 (diff 1.02746e-06)
+----
+crop is not implemented for this likelihood
+[planck_2018_lowl.ee_clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/low_l/simall/simall_100x143_offlike5_EE_Aplanck_B.clik' on test data. got -197.99 expected -197.99 (diff -4.1778e-08)
+----
+crop is not implemented for this likelihood
+[planck_2018_highl_plik.ttteee_lite] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/hi_l/plik_lite/plik_lite_v22_TTTEEE.clik' on test data. got -292.286 expected -292.286 (diff -3.86234e-09)
+----
+before crop : TT 30 -> 2508, TE 30 -> 1996, EE 30 -> 1996
+after crop  : TT 30 -> 2508, TE 30 -> 1996, EE 30 -> 1996
+[planck_2018_lensing.clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/lensing/smicadx12_Dec5_ftl_mv2_ndclpp_p_teb_consext8.clik_lensing' on test data. got -4.42102
+----
+[bao.desi_dr2.desi_bao_all] Initialized.
+[mcmc] Getting initial point... (this may take a few seconds)
+[mcmc] Initial point: H0:67.4, omega_cdm:0.12, A_s:2.1e-09, A_planck:1, lambda_reset:0.3, g_holographic:0.014, phi_phase:3.14, z_trans:20, delta_z:5
+[model] Measuring speeds... (this may take a few seconds)
+[model] Setting measured speeds (per sec): {planck_2018_lowl.TT_clik: 1250.0, planck_2018_lowl.EE_clik: 4490.0, planck_2018_highl_plik.TTTEEE_lite: 605.0, planck_2018_lensing.clik: 930.0, bao.desi_dr2.desi_bao_all: 719.0, sn.pantheonplus: 720.0, classy: 0.105}
+[mcmc] Oversampling with factors:
+[mcmc] *  1 : ['H0', 'omega_cdm', 'A_s', 'lambda_reset', 'g_holographic', 'phi_phase', 'z_trans', 'delta_z']
+[mcmc] * 20 : ['A_planck']
+[mcmc] Covariance matrix loaded for params ['H0', 'omega_cdm', 'A_s', 'A_planck', 'lambda_reset', 'g_holographic', 'phi_phase', 'z_trans', 'delta_z']
+[mcmc] All parameters' covariance loaded from given covmat.
+[mcmc] Sampling!
+[mcmc] Progress @ 2026-06-24 12:21:33 : 1 steps taken, and 0 accepted.
+[mcmc] Progress @ 2026-06-24 12:22:42 : 23 steps taken, and 4 accepted.
+[mcmc] Progress @ 2026-06-24 12:23:51 : 75 steps taken, and 12 accepted.
+[mcmc] Progress @ 2026-06-24 12:24:53 : 125 steps taken, and 19 accepted.
+[mcmc] Progress @ 2026-06-24 12:25:53 : 173 steps taken, and 29 accepted.
+[mcmc] Progress @ 2026-06-24 12:27:00 : 218 steps taken, and 37 accepted.
+[mcmc] Progress @ 2026-06-24 12:28:02 : 262 steps taken, and 45 accepted.
+[mcmc] Progress @ 2026-06-24 12:29:04 : 302 steps taken, and 51 accepted.
+[mcmc] Progress @ 2026-06-24 12:30:07 : 342 steps taken, and 59 accepted.
+[mcmc] Progress @ 2026-06-24 12:31:11 : 395 steps taken, and 64 accepted.
+[mcmc] Progress @ 2026-06-24 12:32:21 : 461 steps taken, and 69 accepted.
+[mcmc] Progress @ 2026-06-24 12:33:28 : 517 steps taken, and 78 accepted.
+[mcmc] Progress @ 2026-06-24 12:34:36 : 540 steps taken, and 82 accepted.
+[mcmc] Learn + convergence test @ 90 samples accepted.
+[mcmc]  - Acceptance rate: 0.456
+[mcmc]  - Convergence of means: R-1 = 33.195036 after 72 accepted steps
+[mcmc] Convergence less than requested for updates: waiting until the next convergence check.
+[mcmc] Progress @ 2026-06-24 12:35:45 : 611 steps taken, and 92 accepted.
+[mcmc] Progress @ 2026-06-24 12:36:54 : 681 steps taken, and 104 accepted.
+[mcmc] Progress @ 2026-06-24 12:37:59 : 724 steps taken, and 106 accepted.
+[mcmc] Progress @ 2026-06-24 12:39:08 : 801 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:40:14 : 861 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:41:21 : 915 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:42:24 : 985 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:43:26 : 1023 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:44:31 : 1106 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:45:36 : 1157 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:46:38 : 1230 steps taken, and 112 accepted.
+[mcmc] Progress @ 2026-06-24 12:47:40 : 1293 steps taken, and 112 accepted.

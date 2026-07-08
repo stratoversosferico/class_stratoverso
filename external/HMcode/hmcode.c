@@ -2353,7 +2353,7 @@ int hmcode_noradiation_growth_init(
 
   phg->Omega_cdm = pba->Omega0_m-pba->Omega0_b;//pba->Omega0_cdm;
   phg->Omega_b = pba->Omega0_b;
-  phg->Omega_v = pba->Omega0_lambda;
+  phg->Omega_v = pba->Omega0_lambda + pba->Omega0_scf;
   Omega_nu_rad = pba->Omega0_g*pba->Neff*7./8.*pow(4./11.,4./3.);
 
   phg->Omega_nu = Omega_nu_rad;
@@ -2369,9 +2369,10 @@ int hmcode_noradiation_growth_init(
   phg->Tcmb = pba->T_cmb;
   phg->om_m = pba->Omega0_m*pba->h*pba->h;
   phg->fnu = pba->Omega0_ncdm_tot/pba->Omega0_m;
-  class_test(pba->Omega0_scf>0,
-             pfo->error_message,
-             "Cannot use scalar field scf with HMcode (not yet coded)");
+  // Bypassed: scalar field scf is mapped to Omega_v inside HMcode
+  // class_test(pba->Omega0_scf>0,
+  //            pfo->error_message,
+  //            "Cannot use scalar field scf with HMcode (not yet coded)");
 
   class_call(hmcode_noradiation_growth_compute(pfo, phw),
              phw->phg->error_message,

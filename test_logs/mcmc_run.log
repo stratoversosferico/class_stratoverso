@@ -1,0 +1,17 @@
+[output] Output to be read-from/written-into folder 'chains', with prefix 'stratoverso_test_mcmc'
+[output] Found existing info files with the requested output prefix: 'chains/stratoverso_test_mcmc'
+[output] Will delete previous products ('force' was requested).
+[classy] `classy` module loaded successfully from /Users/coldmac/.gemini/antigravity/scratch/stratoverso_research/class_stratoverso/build/lib.macosx-10.13-universal2-cpython-313/classy
+[mcmc] Getting initial point... (this may take a few seconds)
+[mcmc] Initial point: H0:67.4, lambda_reset:0.3, g_holographic:0.014, phi_phase:3.14
+[model] Measuring speeds... (this may take a few seconds)
+[model] Setting measured speeds (per sec): {stratoverso_likelihood: 46600.0, classy: 0.356}
+[mcmc] Oversampling with factors:
+[mcmc] *  1 : ['H0']
+[mcmc] * 37 : ['lambda_reset', 'g_holographic', 'phi_phase']
+[mcmc] Covariance matrix not present. We will start learning the covariance of the proposal earlier: R-1 = 30 (would be 2 if all params loaded).
+[mcmc] Sampling!
+[mcmc] Progress @ 2026-06-23 07:35:25 : 1 steps taken, and 0 accepted.
+[mcmc] Reached maximum number of accepted steps allowed (100). Stopping.
+[mcmc] Sampling complete after 100 accepted steps.
+MCMC completed successfully. Chains saved to chains/stratoverso_test_mcmc.

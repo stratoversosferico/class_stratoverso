@@ -114,6 +114,13 @@
 
 #include "background.h"
 
+/* Stratoverso: width (in units of one reset-layer index n) of the smooth
+   saturation used in stratoverso_n_smooth_of_t() to bound n(t) to [0,140]
+   without a kink. Chosen far below one layer spacing, so the cascade's
+   physical content is unaffected to ~1e-6 precision -- see comment above
+   stratoverso_n_smooth_of_t() below. */
+#define _STRATOVERSO_NSMOOTH_WIDTH_ 0.05
+
 /**
  * Background quantities at given redshift z.
  *
@@ -356,6 +363,82 @@ int background_z_of_tau(
 }
 
 /**
+ * Stratoverso: numerically stable softplus, used as a C-infinity
+ * replacement for max(x,0). softplus_width(x) -> x for x >> width,
+ * -> 0 for x << -width, and is smooth (all derivatives continuous)
+ * everywhere in between. Reduces to max(x,0) exactly as width -> 0.
+ */
+double stratoverso_softplus(double x, double width) {
+
+  double z = x / width;
+
+  /* avoid overflow/underflow in exp(); softplus_width(x) equals x (resp. 0)
+     to machine precision once |z| is this large */
+  if (z > 40.) return x;
+  if (z < -40.) return 0.;
+
+  return width * log1p(exp(z));
+}
+
+/**
+ * Stratoverso: smooth (C-infinity) replacement for clamp(x,lo,hi), built
+ * out of two softplus folds. Reduces to clamp(x,lo,hi) exactly as
+ * width -> 0, and is indistinguishable from it (to numerical precision)
+ * whenever x is more than a few "width" away from lo or hi.
+ */
+double stratoverso_smooth_clamp(double x, double lo, double hi, double width) {
+
+  double y = lo + stratoverso_softplus(x - lo, width);
+  y = hi - stratoverso_softplus(hi - y, width);
+
+  return y;
+}
+
+/**
+ * Stratoverso: smooth continuation in cosmic time t of the discrete
+ * reset-layer index n. The discrete cascade resets at proper times
+ * tau_n = tau_today * exp[(3-n) * 2/gamma_eff] (see STATO_LAVORO.md);
+ * inverting this relation for n as a function of tau = t_star - t gives
+ * the analytic envelope n_raw(t) below, which exactly interpolates the
+ * discrete layer index at each reset time. n_raw(t) is only physically
+ * meaningful for n in [0,140] (the cascade has a finite number of
+ * layers), so it used to be hard-clamped to that range. That hard
+ * clamp(0,140) creates a kink (discontinuous d(a_phys_factor)/dt) right
+ * where n_raw(t) crosses 0, which for realistic parameters falls inside
+ * the integrated history (around z~0.6-0.8) -- i.e. squarely in the
+ * late-time/ISW/lensing regime that Planck constrains tightly. Here we
+ * replace the hard clamp by stratoverso_smooth_clamp() with a width far
+ * below one layer spacing (so the cascade's physical content at n~O(1-140)
+ * is unaffected to ~1e-6 precision, well beyond any current data
+ * sensitivity), which removes the kink and keeps n(t) C-infinity for
+ * the whole background evolution.
+ */
+double stratoverso_n_smooth_of_t(struct background * pba, double t) {
+
+  double tau = pba->t_star - t;
+  if (tau < 1.0e-5) tau = 1.0e-5;
+
+  double n_raw = 3.0 - 0.5 * pba->gamma_eff * log(tau / pba->tau_today);
+
+  return stratoverso_smooth_clamp(n_raw, 0.0, 140.0, _STRATOVERSO_NSMOOTH_WIDTH_);
+}
+
+/**
+ * Stratoverso: redshift-space sigmoid gate for the hybrid LCDM + Stratoverso
+ * background, f(z) -> 1 for z << z_trans (Stratoverso active) and f(z) -> 0
+ * for z >> z_trans (pure LCDM). delta_z sets the transition width.
+ *
+ * Used in background_functions() as f_cutoff, replacing the previous
+ * a-space cutoff (transition at a=0.4, i.e. z~1.5, width 0.05). z_trans and
+ * delta_z are read from pba->z_trans/pba->delta_z (input parameters
+ * "z_trans"/"delta_z", default 20.0/5.0, parsed in input.c like
+ * lambda_reset).
+ */
+double stratoverso_f_transition(double z, double z_trans, double delta_z) {
+  return 1.0 / (1.0 + exp((z - z_trans) / delta_z));
+}
+
+/**
  * Function evaluating all background quantities which can be computed
  * analytically as a function of a and of {B} quantities (see
  * discussion at the beginning of this file).
@@ -419,6 +502,32 @@ int background_functions(
   /** - pass value of \f$ a\f$ to output */
   pvecback[pba->index_bg_a] = a;
 
+  double H0_Planck = pba->H0 / 0.724;
+  double a_phys = a;
+  if (pba->a_phys_factor_today > 1.0) {
+    if (a < 1.e-5) {
+      /* pvecback_B[index_bi_time] is not yet initialized at the one
+         bootstrap call made from background_initial_conditions() before
+         integration starts; deep in radiation domination n_smooth(t) is
+         flat at ~0 anyway (see stratoverso_n_smooth_of_t()), so factor=1
+         is both safe and continuous with the branch below. */
+      pba->a_phys_factor = 1.0;
+    } else {
+      double t = pvecback_B[pba->index_bi_time];
+      double n_smooth = stratoverso_n_smooth_of_t(pba, t);
+      pba->a_phys_factor = pow(pba->lambda_reset, -n_smooth / 3.0);
+    }
+    a_phys = a * pba->a_phys_factor / pba->a_phys_factor_today;
+  }
+  double f_cutoff = 1.0;
+  if (pba->has_scf == _TRUE_) {
+    double z_gate = 1.0 / a - 1.0;
+    f_cutoff = stratoverso_f_transition(z_gate, pba->z_trans, pba->delta_z);
+  }
+  if (a == 1.0) {
+    // printf("[Debug bg] a=1.0, t=%e, t_star=%e, tau_today=%e, a_phys_factor=%e, a_phys_factor_today=%e, a_phys=%e\n", pvecback_B[pba->index_bi_time], pba->t_star, pba->tau_today, pba->a_phys_factor, pba->a_phys_factor_today, a_phys);
+  }
+
   /** - compute each component's density and pressure */
 
   /* photons */
@@ -469,7 +578,6 @@ int background_functions(
     rho_r += pvecback[pba->index_bg_rho_dr];
   }
 
-  /* Scalar field */
   if (pba->has_scf == _TRUE_) {
     phi = pvecback_B[pba->index_bi_phi_scf];
     phi_prime = pvecback_B[pba->index_bi_phi_prime_scf];
@@ -478,8 +586,8 @@ int background_functions(
     pvecback[pba->index_bg_V_scf] = V_scf(pba,phi); //V_scf(pba,phi); //write here potential as function of phi
     pvecback[pba->index_bg_dV_scf] = dV_scf(pba,phi); // dV_scf(pba,phi); //potential' as function of phi
     pvecback[pba->index_bg_ddV_scf] = ddV_scf(pba,phi); // ddV_scf(pba,phi); //potential'' as function of phi
-    pvecback[pba->index_bg_rho_scf] = (phi_prime*phi_prime/(2*a*a) + V_scf(pba,phi))/3.; // energy of the scalar field. The field units are set automatically by setting the initial conditions
-    pvecback[pba->index_bg_p_scf] =(phi_prime*phi_prime/(2*a*a) - V_scf(pba,phi))/3.; // pressure of the scalar field
+    pvecback[pba->index_bg_rho_scf] = f_cutoff * (phi_prime*phi_prime/(2*a_phys*a_phys) + V_scf(pba,phi))/3.; // energy of the scalar field. The field units are set automatically by setting the initial conditions
+    pvecback[pba->index_bg_p_scf] = f_cutoff * (phi_prime*phi_prime/(2*a_phys*a_phys) - V_scf(pba,phi))/3.; // pressure of the scalar field
     rho_tot += pvecback[pba->index_bg_rho_scf];
     p_tot += pvecback[pba->index_bg_p_scf];
     dp_dloga += 0.0; /** <-- This depends on a_prime_over_a, so we cannot add it now! */
@@ -591,7 +699,7 @@ int background_functions(
   pvecback[pba->index_bg_p_tot_prime] = a*pvecback[pba->index_bg_H]*dp_dloga;
   if (pba->has_scf == _TRUE_) {
     /** The contribution of scf was not added to dp_dloga, add p_scf_prime here: */
-    pvecback[pba->index_bg_p_prime_scf] = pvecback[pba->index_bg_phi_prime_scf]*
+    pvecback[pba->index_bg_p_prime_scf] = f_cutoff * pvecback[pba->index_bg_phi_prime_scf]*
       (-pvecback[pba->index_bg_phi_prime_scf]*pvecback[pba->index_bg_H]/a-2./3.*pvecback[pba->index_bg_dV_scf]);
     pvecback[pba->index_bg_p_tot_prime] += pvecback[pba->index_bg_p_prime_scf];
   }
@@ -832,9 +940,15 @@ int background_init(
              pba->error_message);
 
   /** - integrate the background over log(a), allocate and fill the background table */
-  class_call(background_solve(ppr,pba),
-             pba->error_message,
-             pba->error_message);
+  if (pba->has_scf == _TRUE_) {
+    class_call(background_solve_stratoverso(ppr,pba),
+               pba->error_message,
+               pba->error_message);
+  } else {
+    class_call(background_solve(ppr,pba),
+               pba->error_message,
+               pba->error_message);
+  }
 
   /** - find and store a few derived parameters at radiation-matter equality */
   class_call(background_find_equality(ppr,pba),
@@ -2051,8 +2165,19 @@ int background_solve(
        instantaneously-decoupled neutrinos accounting for the
        radiation density, beyond photons */
 
+  double p_scf_initial = 0.0;
+  if (pba->has_scf == _TRUE_) {
+    p_scf_initial = pba->background_table[pba->index_bg_p_scf];
+  }
+  printf("[Neff Debug] Omega_r_0 = %e, rho_crit_0 = %e, p_scf_0 = %e, rho_g_0 = %e, has_scf = %d\n",
+         pba->background_table[pba->index_bg_Omega_r],
+         pba->background_table[pba->index_bg_rho_crit],
+         p_scf_initial,
+         pba->background_table[pba->index_bg_rho_g],
+         pba->has_scf);
   pba->Neff = (pba->background_table[pba->index_bg_Omega_r]
                *pba->background_table[pba->index_bg_rho_crit]
+               -3.0*p_scf_initial
                -pba->background_table[pba->index_bg_rho_g])
     /(7./8.*pow(4./11.,4./3.)*pba->background_table[pba->index_bg_rho_g]);
 
@@ -2145,6 +2270,7 @@ int background_initial_conditions(
 
   double rho_ncdm, p_ncdm, rho_ncdm_rel_tot=0.;
   double f,Omega_rad, rho_rad;
+  pba->a_phys_factor = 1.0;
   int counter,is_early_enough,n_ncdm;
   double scf_lambda;
   double rho_fld_today;
@@ -2276,7 +2402,11 @@ int background_initial_conditions(
           printf(" No attractor IC for lambda = %.3e ! \n ",scf_lambda);
         }
       }
-      pvecback_integration[pba->index_bi_phi_prime_scf] = 2.*a*sqrt(V_scf(pba,pvecback_integration[pba->index_bi_phi_scf]))*pba->phi_prime_ini_scf;
+      double a_phys_ini = a;
+      if (pba->a_phys_factor_today > 1.0) {
+        a_phys_ini = a * pba->a_phys_factor / pba->a_phys_factor_today;
+      }
+      pvecback_integration[pba->index_bi_phi_prime_scf] = 2.*a_phys_ini*sqrt(V_scf(pba,pvecback_integration[pba->index_bi_phi_scf]))*pba->phi_prime_ini_scf;
     }
     else {
       printf("Not using attractor initial conditions\n");
@@ -2663,8 +2793,12 @@ int background_derivs(
   if (pba->has_scf == _TRUE_) {
     /** - Scalar field equation: \f$ \phi'' + 2 a H \phi' + a^2 dV = 0 \f$  (note H is wrt cosmological time)
         written as \f$ d\phi/dlna = phi' / (aH) \f$ and \f$ d\phi'/dlna = -2*phi' - (a/H) dV \f$ */
-    dy[pba->index_bi_phi_scf] = y[pba->index_bi_phi_prime_scf]/a/H;
-    dy[pba->index_bi_phi_prime_scf] = - 2*y[pba->index_bi_phi_prime_scf] - a*dV_scf(pba,y[pba->index_bi_phi_scf])/H ;
+    double a_phys = a;
+    if (pba->a_phys_factor_today > 1.0) {
+      a_phys = a * pba->a_phys_factor / pba->a_phys_factor_today;
+    }
+    dy[pba->index_bi_phi_scf] = y[pba->index_bi_phi_prime_scf]/a_phys/H;
+    dy[pba->index_bi_phi_prime_scf] = - 2*y[pba->index_bi_phi_prime_scf] - a_phys*dV_scf(pba,y[pba->index_bi_phi_scf])/H ;
   }
 
   return _SUCCESS_;
@@ -3004,4 +3138,293 @@ double ddV_scf(
                struct background *pba,
                double phi) {
   return ddV_e_scf(pba,phi)*V_p_scf(pba,phi) + 2*dV_e_scf(pba,phi)*dV_p_scf(pba,phi) + V_e_scf(pba,phi)*ddV_p_scf(pba,phi);
+}
+
+int rk4_step(
+    int (*derivs)(double x, double * y, double * dy, void * param, ErrorMsg err),
+    double x,
+    double h,
+    double * y,
+    double * dy,
+    int neq,
+    void * param,
+    double * ytemp,
+    double * k1,
+    double * k2,
+    double * k3,
+    double * k4,
+    ErrorMsg err
+) {
+  int i;
+  for (i = 0; i < neq; i++) {
+    k1[i] = dy[i];
+    ytemp[i] = y[i] + 0.5 * h * k1[i];
+  }
+  if (derivs(x + 0.5 * h, ytemp, k2, param, err) == _FAILURE_) return _FAILURE_;
+  for (i = 0; i < neq; i++) {
+    ytemp[i] = y[i] + 0.5 * h * k2[i];
+  }
+  if (derivs(x + 0.5 * h, ytemp, k3, param, err) == _FAILURE_) return _FAILURE_;
+  for (i = 0; i < neq; i++) {
+    ytemp[i] = y[i] + h * k3[i];
+  }
+  if (derivs(x + h, ytemp, k4, param, err) == _FAILURE_) return _FAILURE_;
+  for (i = 0; i < neq; i++) {
+    y[i] += (h / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]);
+  }
+  return _SUCCESS_;
+}
+
+int background_solve_stratoverso(
+    struct precision *ppr,
+    struct background *pba
+    ) {
+
+  /* parameters and workspace for the background_derivs function */
+  struct background_parameters_and_workspace bpaw;
+  /* vector of quantities to be integrated */
+  double * pvecback_integration;
+  /* vector of all background quantities */
+  double * pvecback;
+  /* comoving radius coordinate in Mpc (equal to conformal distance in flat case) */
+  double comoving_radius=0.;
+  /* conformal distance in Mpc (equal to comoving radius in flat case) */
+  double conformal_distance;
+
+  /* initial and final loga values */
+  double loga_ini, loga_final;
+  /* growth factor today */
+  double D_today;
+  /* indices for the different arrays */
+  int index_loga;
+  /* what parameters are used in the output? */
+  int * used_in_output;
+
+  /* index of ncdm species */
+  int n_ncdm;
+
+  /** - setup background workspace */
+  bpaw.pba = pba;
+  class_alloc(pvecback,pba->bg_size*sizeof(double),pba->error_message);
+  bpaw.pvecback = pvecback;
+
+  /** - allocate vector of quantities to be integrated */
+  class_alloc(pvecback_integration,pba->bi_size*sizeof(double),pba->error_message);
+
+  /** - impose initial conditions with background_initial_conditions() */
+  class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&(loga_ini)),
+             pba->error_message,
+             pba->error_message);
+
+  /** - Determine output vector */
+  loga_final = 0.; // with our conventions, loga is in fact log(a/a_0); we integrate until today, when log(a/a_0) = 0
+  pba->bt_size = ppr->background_Nloga;
+
+  /** - allocate background tables */
+  class_alloc(pba->tau_table,pba->bt_size * sizeof(double),pba->error_message);
+  class_alloc(pba->z_table,pba->bt_size * sizeof(double),pba->error_message);
+  class_alloc(pba->loga_table,pba->bt_size * sizeof(double),pba->error_message);
+
+  class_alloc(pba->d2tau_dz2_table,pba->bt_size * sizeof(double),pba->error_message);
+  class_alloc(pba->d2z_dtau2_table,pba->bt_size * sizeof(double),pba->error_message);
+
+  class_alloc(pba->background_table,pba->bt_size * pba->bg_size * sizeof(double),pba->error_message);
+  class_alloc(pba->d2background_dloga2_table,pba->bt_size * pba->bg_size * sizeof(double),pba->error_message);
+
+  class_alloc(used_in_output, pba->bt_size*sizeof(int), pba->error_message);
+
+  /** - define values of loga at which results will be stored */
+  for (index_loga=0; index_loga<pba->bt_size; index_loga++) {
+    pba->loga_table[index_loga] = loga_ini + index_loga*(loga_final-loga_ini)/(pba->bt_size-1);
+    used_in_output[index_loga] = 1;
+  }
+
+  /* Setup local variables for RK4 integration */
+  double * ytemp = malloc(pba->bi_size * sizeof(double));
+  double * k1 = malloc(pba->bi_size * sizeof(double));
+  double * k2 = malloc(pba->bi_size * sizeof(double));
+  double * k3 = malloc(pba->bi_size * sizeof(double));
+  double * k4 = malloc(pba->bi_size * sizeof(double));
+  double * dy = malloc(pba->bi_size * sizeof(double));
+
+  double gamma_eff = 1.661;
+  double tau_today = 0.2 * _Gyr_over_Mpc_;
+  double t_star = 14.0 * _Gyr_over_Mpc_;
+  int n_rel = 0;
+
+  /* Run a test integration to determine the exact age of the universe today in standard cosmology */
+  double * pvecback_integration_test = malloc(pba->bi_size * sizeof(double));
+  memcpy(pvecback_integration_test, pvecback_integration, pba->bi_size * sizeof(double));
+  double temp_factor_today = pba->a_phys_factor_today;
+  pba->a_phys_factor_today = 1.0;
+  pba->a_phys_factor = 1.0;
+  
+  for (index_loga = 0; index_loga < pba->bt_size - 1; index_loga++) {
+    double x = pba->loga_table[index_loga];
+    double x_next = pba->loga_table[index_loga+1];
+    double h = x_next - x;
+    class_call(rk4_step(background_derivs, x, h, pvecback_integration_test, dy, pba->bi_size, &bpaw, ytemp, k1, k2, k3, k4, pba->error_message),
+               pba->error_message, pba->error_message);
+  }
+  double t_today_exact = pvecback_integration_test[pba->index_bi_time];
+  free(pvecback_integration_test);
+
+  /* Iterative fixed-point calibration loop to ensure a_phys(a=1) = 1.0 exactly today */
+  int iter;
+  double t_actual = t_today_exact;
+  for (iter = 0; iter < 3; iter++) {
+    pba->t_star = t_actual + tau_today;
+    pba->tau_today = tau_today;
+    pba->gamma_eff = gamma_eff;
+    double n_smooth_actual = stratoverso_n_smooth_of_t(pba, t_actual);
+    pba->a_phys_factor_today = pow(pba->lambda_reset, -n_smooth_actual / 3.0);
+    pba->a_phys_factor = 1.0;
+
+    /* Reset the initial conditions and execute the integration run */
+    class_call(background_initial_conditions(ppr,pba,pvecback,pvecback_integration,&(loga_ini)),
+               pba->error_message, pba->error_message);
+    double loga = loga_ini;
+    class_call(background_derivs(loga, pvecback_integration, dy, &bpaw, pba->error_message),
+               pba->error_message, pba->error_message);
+    class_call(background_sources(loga, pvecback_integration, dy, 0, &bpaw, pba->error_message),
+               pba->error_message, pba->error_message);
+
+    /* Integration loop (continuous RK4 integration) */
+    for (index_loga = 0; index_loga < pba->bt_size - 1; index_loga++) {
+      double x = pba->loga_table[index_loga];
+      double x_next = pba->loga_table[index_loga+1];
+      double h = x_next - x;
+
+      class_call(rk4_step(background_derivs, x, h, pvecback_integration, dy, pba->bi_size, &bpaw, ytemp, k1, k2, k3, k4, pba->error_message),
+                 pba->error_message, pba->error_message);
+
+      /* Save results at x_next */
+      class_call(background_derivs(x_next, pvecback_integration, dy, &bpaw, pba->error_message),
+                 pba->error_message, pba->error_message);
+      class_call(background_sources(x_next, pvecback_integration, dy, index_loga + 1, &bpaw, pba->error_message),
+                 pba->error_message, pba->error_message);
+    }
+    t_actual = pvecback_integration[pba->index_bi_time];
+  }
+
+  /* printf("[Stratoverso] End of integration loop. Final conformal time = %f, final cosmic time = %f Mpc\n", pvecback_integration[pba->index_bi_tau], pvecback_integration[pba->index_bi_time]); */
+
+  free(ytemp);
+  free(k1);
+  free(k2);
+  free(k3);
+  free(k4);
+  free(dy);
+
+  /** - recover some quantities today */
+  /* -> age in Gyears */
+  pba->age = pvecback_integration[pba->index_bi_time]/_Gyr_over_Mpc_;
+  /* -> conformal age in Mpc */
+  pba->conformal_age = pvecback_integration[pba->index_bi_tau];
+  /* -> contribution of decaying dark matter and dark radiation to the critical density today: */
+  if (pba->has_dcdm == _TRUE_) {
+    pba->Omega0_dcdm = pvecback_integration[pba->index_bi_rho_dcdm]/pba->H0/pba->H0;
+  }
+  if (pba->has_dr == _TRUE_) {
+    pba->Omega0_dr = pvecback_integration[pba->index_bi_rho_dr]/pba->H0/pba->H0;
+  }
+  /* -> scale-invariant growth rate today */
+  D_today = pvecback_integration[pba->index_bi_D];
+
+  /** - In a loop over lines, fill rest of background table for
+      quantities that depend on numbers like "conformal_age" or
+      "D_today" that were calculated just before */
+  for (index_loga=0; index_loga < pba->bt_size; index_loga++) {
+
+    pba->background_table[index_loga*pba->bg_size+pba->index_bg_D]*= 1./D_today;
+
+    conformal_distance = pba->conformal_age - pba->tau_table[index_loga];
+    pba->background_table[index_loga*pba->bg_size+pba->index_bg_conf_distance] = conformal_distance;
+
+    if (pba->sgnK == 0) { comoving_radius = conformal_distance; }
+    else if (pba->sgnK == 1) { comoving_radius = sin(sqrt(pba->K)*conformal_distance)/sqrt(pba->K); }
+    else if (pba->sgnK == -1) { comoving_radius = sinh(sqrt(-pba->K)*conformal_distance)/sqrt(-pba->K); }
+
+    pba->background_table[index_loga*pba->bg_size+pba->index_bg_ang_distance] = comoving_radius/(1.+pba->z_table[index_loga]);
+    pba->background_table[index_loga*pba->bg_size+pba->index_bg_lum_distance] = comoving_radius*(1.+pba->z_table[index_loga]);
+  }
+
+  /** - fill tables of second derivatives (in view of spline interpolation) */
+  class_call(array_spline_table_lines(pba->z_table,
+                                      pba->bt_size,
+                                      pba->tau_table,
+                                      1,
+                                      pba->d2tau_dz2_table,
+                                      _SPLINE_EST_DERIV_,
+                                      pba->error_message),
+             pba->error_message,
+             pba->error_message);
+
+  class_call(array_spline_table_lines(pba->tau_table,
+                                      pba->bt_size,
+                                      pba->z_table,
+                                      1,
+                                      pba->d2z_dtau2_table,
+                                      _SPLINE_EST_DERIV_,
+                                      pba->error_message),
+             pba->error_message,
+             pba->error_message);
+
+  class_call(array_spline_table_lines(pba->loga_table,
+                                      pba->bt_size,
+                                      pba->background_table,
+                                      pba->bg_size,
+                                      pba->d2background_dloga2_table,
+                                      _SPLINE_EST_DERIV_,
+                                      pba->error_message),
+             pba->error_message,
+             pba->error_message);
+
+  /** - compute remaining "related parameters" */
+  double p_scf_initial = 0.0;
+  if (pba->has_scf == _TRUE_) {
+    p_scf_initial = pba->background_table[pba->index_bg_p_scf];
+  }
+  /* printf("[Neff Debug Stratoverso] Omega_r_0 = %e, rho_crit_0 = %e, p_scf_0 = %e, rho_g_0 = %e, has_scf = %d\n",
+         pba->background_table[pba->index_bg_Omega_r],
+         pba->background_table[pba->index_bg_rho_crit],
+         p_scf_initial,
+         pba->background_table[pba->index_bg_rho_g],
+         pba->has_scf); */
+  pba->Neff = (pba->background_table[pba->index_bg_Omega_r]
+               *pba->background_table[pba->index_bg_rho_crit]
+               -3.0*p_scf_initial
+               -pba->background_table[pba->index_bg_rho_g])
+    /(7./8.*pow(4./11.,4./3.)*pba->background_table[pba->index_bg_rho_g]);
+
+  /** - send information to standard output */
+  if (pba->background_verbose > 0) {
+    printf(" -> [Stratoverso] age = %f Gyr\n",pba->age);
+    printf(" -> [Stratoverso] conformal age = %f Mpc\n",pba->conformal_age);
+    printf(" -> [Stratoverso] N_eff = %g\n",pba->Neff);
+  }
+
+  /**  - store information in the background structure */
+  pba->Omega0_m = pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_Omega_m];
+  pba->Omega0_r = pba->background_table[(pba->bt_size-1)*pba->bg_size+pba->index_bg_Omega_r];
+  pba->Omega0_de = 1. - (pba->Omega0_m + pba->Omega0_r + pba->Omega0_k);
+
+  pba->Omega0_nfsm =  pba->Omega0_b;
+  if (pba->has_cdm == _TRUE_)
+    pba->Omega0_nfsm += pba->Omega0_cdm;
+  if (pba->has_idm == _TRUE_)
+    pba->Omega0_nfsm += pba->Omega0_idm;
+  if (pba->has_dcdm == _TRUE_)
+    pba->Omega0_nfsm += pba->Omega0_dcdm;
+  for (n_ncdm=0;n_ncdm<pba->N_ncdm; n_ncdm++) {
+    if (pba->M_ncdm[n_ncdm] > ppr->M_nfsm_threshold) {
+      pba->Omega0_nfsm += pba->Omega0_ncdm[n_ncdm];
+    }
+  }
+
+  free(pvecback);
+  free(pvecback_integration);
+  free(used_in_output);
+
+  return _SUCCESS_;
 }

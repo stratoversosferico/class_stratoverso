@@ -7161,10 +7161,11 @@ int perturbations_total_stress_energy(
            - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*psi);
       }
 
+      double theta_term_scf = 1./3.* k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf];
+
       ppw->delta_rho += delta_rho_scf;
 
-      ppw->rho_plus_p_theta +=  1./3.*
-        k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf];
+      ppw->rho_plus_p_theta += theta_term_scf;
 
       ppw->delta_p += delta_p_scf;
 
@@ -7861,20 +7862,28 @@ int perturbations_sources(
 
     /* delta_scf */
     if (ppt->has_source_delta_scf == _TRUE_) {
+      double ratio_p_rho = 0.0;
+      if (pvecback[pba->index_bg_rho_scf] > 0.0) {
+        ratio_p_rho = pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf];
+      }
       if (ppt->gauge == synchronous){
         delta_rho_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
            + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf])
-          + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf])*theta_over_k2; // N-body gauge correction
+          + 3.*a_prime_over_a*(1.+ratio_p_rho)*theta_over_k2; // N-body gauge correction
       }
       else{
         delta_rho_scf =  1./3.*
           (1./a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_prime_scf]
            + ppw->pvecback[pba->index_bg_dV_scf]*y[ppw->pv->index_pt_phi_scf]
            - 1./a2*pow(ppw->pvecback[pba->index_bg_phi_prime_scf],2)*ppw->pvecmetric[ppw->index_mt_psi])
-          + 3.*a_prime_over_a*(1.+pvecback[pba->index_bg_p_scf]/pvecback[pba->index_bg_rho_scf])*theta_over_k2; // N-body gauge correction
+          + 3.*a_prime_over_a*(1.+ratio_p_rho)*theta_over_k2; // N-body gauge correction
       }
-      _set_source_(ppt->index_tp_delta_scf) = delta_rho_scf/pvecback[pba->index_bg_rho_scf];
+      if (pvecback[pba->index_bg_rho_scf] > 0.0) {
+        _set_source_(ppt->index_tp_delta_scf) = delta_rho_scf/pvecback[pba->index_bg_rho_scf];
+      } else {
+        _set_source_(ppt->index_tp_delta_scf) = 0.0;
+      }
     }
 
     /* delta_dr */
@@ -8413,8 +8422,16 @@ int perturbations_print_variables(double tau,
       rho_plus_p_theta_scf =  1./3.*
         k*k/a2*ppw->pvecback[pba->index_bg_phi_prime_scf]*y[ppw->pv->index_pt_phi_scf];
 
-      delta_scf = delta_rho_scf/pvecback[pba->index_bg_rho_scf];
-      theta_scf = rho_plus_p_theta_scf/(pvecback[pba->index_bg_rho_scf]+pvecback[pba->index_bg_p_scf]);
+      if (pvecback[pba->index_bg_rho_scf] > 0.0) {
+        delta_scf = delta_rho_scf/pvecback[pba->index_bg_rho_scf];
+      } else {
+        delta_scf = 0.0;
+      }
+      if ((pvecback[pba->index_bg_rho_scf]+pvecback[pba->index_bg_p_scf]) > 0.0) {
+        theta_scf = rho_plus_p_theta_scf/(pvecback[pba->index_bg_rho_scf]+pvecback[pba->index_bg_p_scf]);
+      } else {
+        theta_scf = 0.0;
+      }
 
     }
 
@@ -9401,7 +9418,7 @@ int perturbations_derivs(double tau,
       /** - ----> Klein Gordon equation */
 
       dy[pv->index_pt_phi_prime_scf] =  - 2.*a_prime_over_a*y[pv->index_pt_phi_prime_scf]
-        - metric_continuity*pvecback[pba->index_bg_phi_prime_scf] //  metric_continuity = h'/2
+        - metric_continuity*pvecback[pba->index_bg_phi_prime_scf]
         - (k2 + a2*pvecback[pba->index_bg_ddV_scf])*y[pv->index_pt_phi_scf]; //checked
 
     }

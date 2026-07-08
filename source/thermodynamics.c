@@ -564,8 +564,13 @@ int thermodynamics_helium_from_bbn(
              pba->error_message,
              pth->error_message);
 
+  double p_scf_bbn = 0.0;
+  if (pba->has_scf == _TRUE_) {
+    p_scf_bbn = pvecback[pba->index_bg_p_scf];
+  }
   Neff_bbn = (pvecback[pba->index_bg_Omega_r]
               *pvecback[pba->index_bg_rho_crit]
+              -3.0*p_scf_bbn
               -pvecback[pba->index_bg_rho_g])
     /(7./8.*pow(4./11.,4./3.)*pvecback[pba->index_bg_rho_g]);
 

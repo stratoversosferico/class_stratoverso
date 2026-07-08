@@ -87,6 +87,8 @@ struct primordial {
   double k_pivot; /**< pivot scale in \f$ Mpc^{-1} \f$ */
   int has_k_max_for_primordial_pk;
   double k_max_for_primordial_pk; /**< maximum value of k in 1/Mpc in P(k) */
+  double g_holographic; /**< Stratoverso holographic coupling amplitude (epsilon_g) */
+  double phi_phase;     /**< Stratoverso log-periodic phase */
 
   enum primordial_spectrum_type primordial_spec_type; /**< type of primordial spectrum (simple analytic from, integration of inflationary perturbations, etc.) */
 

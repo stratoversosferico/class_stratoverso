@@ -1,0 +1,26 @@
+theory:
+  classy:
+    path: /Users/coldmac/.gemini/antigravity/scratch/stratoverso_research/class_stratoverso
+    extra_args: {}
+likelihood:
+  planck_2018_lowl.TT_clik: {}
+  planck_2018_lowl.EE_clik: {}
+  planck_2018_highl_plik.TTTEEE_lite: {}
+  planck_2018_lensing.clik: {}
+  bao.desi_dr2.desi_bao_all: {}
+  sn.pantheonplus: {}
+params:
+  H0: 67.4
+  omega_b: 0.02237
+  omega_cdm: 0.12
+  tau_reio: 0.0544
+  A_s: 2.1e-09
+  n_s: 0.9649
+  A_planck: 1.0
+  age:
+    latex: t_0
+sampler:
+  evaluate: {}
+packages_path: /Users/coldmac/.cobaya/packages
+output: lcdm_baseline
+stop_at_error: false

@@ -1,0 +1,124 @@
+[output] Output to be read-from/written-into folder 'chains', with prefix 'stratoverso_prerun_wide'
+[classy] `classy` module loaded successfully from /Users/coldmac/.gemini/antigravity/scratch/stratoverso_research/class_stratoverso/build/lib.macosx-10.13-universal2-cpython-313/classy
+[planck_2018_lowl.tt_clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/low_l/commander/commander_dx12_v3_2_29.clik' on test data. got -11.6257 expected -11.6257 (diff 1.02746e-06)
+----
+crop is not implemented for this likelihood
+[planck_2018_lowl.ee_clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/low_l/simall/simall_100x143_offlike5_EE_Aplanck_B.clik' on test data. got -197.99 expected -197.99 (diff -4.1778e-08)
+----
+crop is not implemented for this likelihood
+[planck_2018_highl_plik.ttteee_lite] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/hi_l/plik_lite/plik_lite_v22_TTTEEE.clik' on test data. got -292.286 expected -292.286 (diff -3.86234e-09)
+----
+before crop : TT 30 -> 2508, TE 30 -> 1996, EE 30 -> 1996
+after crop  : TT 30 -> 2508, TE 30 -> 1996, EE 30 -> 1996
+[planck_2018_lensing.clik] `clipy` module loaded successfully from /Users/coldmac/.cobaya/packages/code/planck/clipy/clipy
+----
+clipy_0.15
+Checking likelihood '/Users/coldmac/.cobaya/packages/data/planck_2018/baseline/plc_3.0/lensing/smicadx12_Dec5_ftl_mv2_ndclpp_p_teb_consext8.clik_lensing' on test data. got -4.42102
+----
+[bao.desi_dr2.desi_bao_all] Initialized.
+[mcmc] Getting initial point... (this may take a few seconds)
+[mcmc] Initial point: H0:67.4, omega_cdm:0.12, A_s:2.1e-09, A_planck:1, lambda_reset:0.3, g_holographic:0.014, phi_phase:3.14, z_trans:20, delta_z:5
+[model] Measuring speeds... (this may take a few seconds)
+[model] Setting measured speeds (per sec): {planck_2018_lowl.TT_clik: 966.0, planck_2018_lowl.EE_clik: 4430.0, planck_2018_highl_plik.TTTEEE_lite: 596.0, planck_2018_lensing.clik: 909.0, bao.desi_dr2.desi_bao_all: 638.0, sn.pantheonplus: 677.0, classy: 0.102}
+[mcmc] Oversampling with factors:
+[mcmc] *  1 : ['H0', 'omega_cdm', 'A_s', 'lambda_reset', 'g_holographic', 'phi_phase', 'z_trans', 'delta_z']
+[mcmc] * 20 : ['A_planck']
+[mcmc] Covariance matrix loaded for params ['H0', 'omega_cdm', 'A_s', 'A_planck', 'lambda_reset', 'g_holographic', 'phi_phase', 'z_trans', 'delta_z']
+[mcmc] All parameters' covariance loaded from given covmat.
+[mcmc] Sampling!
+[mcmc] Progress @ 2026-06-24 13:04:54 : 1 steps taken, and 0 accepted.
+[mcmc] Progress @ 2026-06-24 13:05:58 : 23 steps taken, and 5 accepted.
+[mcmc] Progress @ 2026-06-24 13:06:59 : 46 steps taken, and 10 accepted.
+[mcmc] Progress @ 2026-06-24 13:08:09 : 70 steps taken, and 17 accepted.
+[mcmc] Progress @ 2026-06-24 13:09:11 : 103 steps taken, and 23 accepted.
+[mcmc] Progress @ 2026-06-24 13:10:17 : 129 steps taken, and 26 accepted.
+[mcmc] Progress @ 2026-06-24 13:11:17 : 160 steps taken, and 29 accepted.
+[mcmc] Progress @ 2026-06-24 13:12:20 : 179 steps taken, and 29 accepted.
+[mcmc] Progress @ 2026-06-24 13:13:26 : 199 steps taken, and 29 accepted.
+[mcmc] Progress @ 2026-06-24 13:14:35 : 222 steps taken, and 29 accepted.
+[mcmc] Progress @ 2026-06-24 13:15:39 : 248 steps taken, and 31 accepted.
+[mcmc] Progress @ 2026-06-24 13:16:45 : 293 steps taken, and 38 accepted.
+[mcmc] Progress @ 2026-06-24 13:17:51 : 325 steps taken, and 42 accepted.
+[mcmc] Progress @ 2026-06-24 13:18:53 : 384 steps taken, and 46 accepted.
+[mcmc] Progress @ 2026-06-24 13:20:02 : 468 steps taken, and 56 accepted.
+[mcmc] Progress @ 2026-06-24 13:21:03 : 542 steps taken, and 62 accepted.
+[mcmc] Progress @ 2026-06-24 13:22:10 : 578 steps taken, and 66 accepted.
+[mcmc] Progress @ 2026-06-24 13:23:12 : 641 steps taken, and 66 accepted.
+[mcmc] Progress @ 2026-06-24 13:24:15 : 678 steps taken, and 71 accepted.
+[mcmc] Progress @ 2026-06-24 13:25:16 : 795 steps taken, and 86 accepted.
+[mcmc] Progress @ 2026-06-24 13:26:20 : 815 steps taken, and 87 accepted.
+[mcmc] Learn + convergence test @ 90 samples accepted.
+[mcmc]  - Acceptance rate: 0.280
+[mcmc] *WARNING* Negative covariance eigenvectors. This may mean that the covariance of the samples does not contain enough information at this point. Skipping learning a new covmat for now.
+[mcmc] Progress @ 2026-06-24 13:27:23 : 886 steps taken, and 94 accepted.
+[mcmc] Progress @ 2026-06-24 13:28:23 : 970 steps taken, and 105 accepted.
+[mcmc] Progress @ 2026-06-24 13:29:24 : 998 steps taken, and 108 accepted.
+[mcmc] Progress @ 2026-06-24 13:30:24 : 1045 steps taken, and 115 accepted.
+[mcmc] Progress @ 2026-06-24 13:31:24 : 1081 steps taken, and 117 accepted.
+[mcmc] Progress @ 2026-06-24 13:32:32 : 1156 steps taken, and 121 accepted.
+[mcmc] Progress @ 2026-06-24 13:33:34 : 1225 steps taken, and 126 accepted.
+[mcmc] Progress @ 2026-06-24 13:34:36 : 1296 steps taken, and 134 accepted.
+[mcmc] Progress @ 2026-06-24 13:35:39 : 1365 steps taken, and 144 accepted.
+[mcmc] Progress @ 2026-06-24 13:36:42 : 1421 steps taken, and 148 accepted.
+[mcmc] Progress @ 2026-06-24 13:37:48 : 1475 steps taken, and 153 accepted.
+[mcmc] Progress @ 2026-06-24 13:38:48 : 1542 steps taken, and 158 accepted.
+[mcmc] Progress @ 2026-06-24 13:39:52 : 1568 steps taken, and 159 accepted.
+[mcmc] Progress @ 2026-06-24 13:40:57 : 1608 steps taken, and 162 accepted.
+[mcmc] Progress @ 2026-06-24 13:42:04 : 1645 steps taken, and 167 accepted.
+[mcmc] Progress @ 2026-06-24 13:43:05 : 1679 steps taken, and 173 accepted.
+[mcmc] Progress @ 2026-06-24 13:44:14 : 1731 steps taken, and 179 accepted.
+[mcmc] Learn + convergence test @ 180 samples accepted.
+[mcmc]  - Acceptance rate: 0.294
+[mcmc] *WARNING* Negative covariance eigenvectors. This may mean that the covariance of the samples does not contain enough information at this point. Skipping learning a new covmat for now.
+[mcmc] Progress @ 2026-06-24 13:45:21 : 1771 steps taken, and 183 accepted.
+[mcmc] Progress @ 2026-06-24 13:46:21 : 1817 steps taken, and 189 accepted.
+[mcmc] Progress @ 2026-06-24 13:47:22 : 1862 steps taken, and 194 accepted.
+[mcmc] Progress @ 2026-06-24 13:48:33 : 1896 steps taken, and 196 accepted.
+[mcmc] Progress @ 2026-06-24 13:49:40 : 1934 steps taken, and 199 accepted.
+[mcmc] Progress @ 2026-06-24 13:50:51 : 1967 steps taken, and 201 accepted.
+[mcmc] Progress @ 2026-06-24 13:51:58 : 1997 steps taken, and 202 accepted.
+[mcmc] Progress @ 2026-06-24 13:53:08 : 2037 steps taken, and 205 accepted.
+[mcmc] Progress @ 2026-06-24 13:54:18 : 2089 steps taken, and 206 accepted.
+[mcmc] Progress @ 2026-06-24 13:55:19 : 2120 steps taken, and 209 accepted.
+[mcmc] Progress @ 2026-06-24 13:56:25 : 2151 steps taken, and 209 accepted.
+[mcmc] Progress @ 2026-06-24 13:57:35 : 2184 steps taken, and 209 accepted.
+[mcmc] Progress @ 2026-06-24 13:58:39 : 2220 steps taken, and 213 accepted.
+[mcmc] Progress @ 2026-06-24 13:59:41 : 2265 steps taken, and 217 accepted.
+[mcmc] Progress @ 2026-06-24 14:00:46 : 2309 steps taken, and 221 accepted.
+[mcmc] Progress @ 2026-06-24 14:01:50 : 2350 steps taken, and 224 accepted.
+[mcmc] Progress @ 2026-06-24 14:02:53 : 2375 steps taken, and 226 accepted.
+[mcmc] Progress @ 2026-06-24 14:03:54 : 2411 steps taken, and 230 accepted.
+[mcmc] Progress @ 2026-06-24 14:05:04 : 2450 steps taken, and 233 accepted.
+[mcmc] Progress @ 2026-06-24 14:06:05 : 2486 steps taken, and 238 accepted.
+[mcmc] Progress @ 2026-06-24 14:07:09 : 2528 steps taken, and 242 accepted.
+[mcmc] Progress @ 2026-06-24 14:08:12 : 2550 steps taken, and 243 accepted.
+[mcmc] Progress @ 2026-06-24 14:09:18 : 2596 steps taken, and 246 accepted.
+[mcmc] Progress @ 2026-06-24 14:10:25 : 2642 steps taken, and 248 accepted.
+[mcmc] Progress @ 2026-06-24 14:11:28 : 2695 steps taken, and 252 accepted.
+[mcmc] Progress @ 2026-06-24 14:12:35 : 2749 steps taken, and 261 accepted.
+[mcmc] Learn + convergence test @ 270 samples accepted.
+[mcmc]  - Acceptance rate: 0.276
+[mcmc]  - Convergence of means: R-1 = 23.137435 after 216 accepted steps
+[mcmc] Convergence less than requested for updates: waiting until the next convergence check.
+[mcmc] Progress @ 2026-06-24 14:13:44 : 2809 steps taken, and 270 accepted.
+[mcmc] Progress @ 2026-06-24 14:14:48 : 2857 steps taken, and 275 accepted.
+[mcmc] Progress @ 2026-06-24 14:15:57 : 2901 steps taken, and 281 accepted.
+[mcmc] Progress @ 2026-06-24 14:16:58 : 2931 steps taken, and 284 accepted.
+[mcmc] Progress @ 2026-06-24 14:18:01 : 2995 steps taken, and 294 accepted.
+[mcmc] Progress @ 2026-06-24 14:19:03 : 3046 steps taken, and 294 accepted.
+[mcmc] Progress @ 2026-06-24 14:20:11 : 3136 steps taken, and 294 accepted.
+[mcmc] Progress @ 2026-06-24 14:21:13 : 3169 steps taken, and 294 accepted.
+[mcmc] Progress @ 2026-06-24 14:22:18 : 3213 steps taken, and 294 accepted.
+[mcmc] Progress @ 2026-06-24 14:23:20 : 3250 steps taken, and 297 accepted.
+[mcmc] Reached maximum number of accepted steps allowed (300). Stopping.
+[mcmc] Sampling complete after 300 accepted steps.
+Pre-run completato. Covmat empirica in chains/stratoverso_prerun_wide.covmat
